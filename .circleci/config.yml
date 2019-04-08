@@ -19,7 +19,7 @@ executors:
       - MYSQL_ALLOW_EMPTY_PASSWORD: yes
       - MYSQL_ROOT_PASSWORD: ''
       - MYSQL_DATABASE: caww
-      - MYSQL_USER: circleci
+      - MYSQL_USER: root
       - MYSQL_PORT: 3306
 
 jobs:

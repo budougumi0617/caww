@@ -6,7 +6,9 @@ package e2e
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/budougumi0617/caww/repository"
@@ -35,7 +37,9 @@ func TestUserCase_Save(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db, err := sql.Open("mysql", "root:@(localhost:43306)/caww?parseTime=true&loc=Asia%2FTokyo")
+			u := os.Getenv("MYSQL_USER")
+			p := os.Getenv("MYSQL_PORT")
+			db, err := sql.Open("mysql", fmt.Sprintf("%s:@(localhost:%s)/caww?parseTime=true&loc=Asia%%2FTokyo", u, p))
 			if err != nil {
 				log.Fatalln(err)
 			}
