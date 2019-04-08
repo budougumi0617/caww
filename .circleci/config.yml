@@ -45,18 +45,6 @@ jobs:
           key: v1-mod-{{ .Branch }}-{{ checksum "go.mod" }}
           paths:
               - ~/go/pkg/mod/cache
-      - persist_to_workspace:
-          root: /go
-          paths:
-              - pkg/mod/cache
-              - bin
-
-  e2e:
-    executor:
-      name: default
-    steps:
-      - attach_workspace:
-          at: /go
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
@@ -82,6 +70,3 @@ workflows:
   build-and-test:
     jobs:
       - setup
-      - e2e:
-          requires:
-            - setup
