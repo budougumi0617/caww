@@ -18,7 +18,9 @@ executors:
       - TEST_RESULTS: /tmp/test-results # path to where test results will be saved
       - MYSQL_ALLOW_EMPTY_PASSWORD: yes
       - MYSQL_ROOT_PASSWORD: ''
-      - MYSQL_DATABASE: circleci
+      - MYSQL_DATABASE: caww
+      - MYSQL_USER: circleci
+      - MYSQL_PORT: 3306
 
 jobs:
   setup:
