@@ -18,7 +18,7 @@ hisotry:
 	mysql -h 127.0.0.1 --port $(MYSQL_PORT) -u$(MYSQL_USER) -D caww -e "SELECT * FROM gorp_migrations;"
 
 e2e:
-	go test -tags e2e ./...
+	go test -v -tags e2e ./...
 
 mysql.start:
 	docker run --rm -d -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -p $(MYSQL_PORT):3306 --name mysql_caww mysql:5.7
