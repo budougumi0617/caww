@@ -13,7 +13,9 @@ import (
 // FindUser implements port.UserRepository.
 func (repo *Repo) FindUser(ctx context.Context, id int64) (*entity.User, error) {
 	u := &entity.User{}
-	err := repo.db.QueryRowContext(ctx, "SELECT id, name, email, created_at, updated_at FROM user WHERE id = ?", id).Scan(
+	err := repo.db.QueryRowContext(ctx, `
+		SELECT id, name, email, created_at, updated_at FROM user WHERE id = ?
+	`, id).Scan(
 		&u.ID,
 		&u.Name,
 		&u.Email,
@@ -42,6 +44,9 @@ func (repo *Repo) AddUser(ctx context.Context, u *entity.User) error {
 	now := time.Now()
 
 	res, err := stmt.ExecContext(ctx, u.Name, u.Email, now, now)
+	if err != nil {
+		return err
+	}
 	id, err := res.LastInsertId() // 挿入した行のIDを返却
 	if err != nil {
 		return err
