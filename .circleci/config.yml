@@ -1,0 +1,85 @@
+version: 2.1
+executors:
+  default:
+    docker:
+      # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
+      - image: circleci/golang:1.12.2
+      # CircleCI MySQL images available at: https://hub.docker.com/r/circleci/mysql/
+      - image: circleci/mysql:5.7-ram
+        # environment:
+        #   MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        #   MYSQL_ROOT_PASSWORD: ''
+        #   MYSQL_DATABASE: circleci
+
+    working_directory: /go/src/github.com/budougumi0617/caww
+
+    environment:
+      - GO111MODULE: "on"
+      - TEST_RESULTS: /tmp/test-results # path to where test results will be saved
+      - MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      - MYSQL_ROOT_PASSWORD: ''
+      - MYSQL_DATABASE: circleci
+
+jobs:
+  setup:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - run: mkdir -p $TEST_RESULTS
+
+      - restore_cache:
+          name: Restore go modules cache
+          keys:
+              - v1-mod-{{ .Branch }}-{{ checksum "go/go.mod" }}
+
+      - run:
+          name: Vendoring
+          command: go mod download
+      - run: go get github.com/jstemmer/go-junit-report
+      - run: go get github.com/rubenv/sql-migrate/...
+      - save_cache:
+          name: Save go modules cache
+          key: v1-mod-{{ .Branch }}-{{ checksum "go/go.mod" }}
+          paths:
+              - ~/go/pkg/mod/cache
+      - persist_to_workspace:
+          root: /go
+          paths:
+              - pkg/mod/cache
+              - bin
+
+  e2e:
+    executor:
+      name: default
+    steps:
+      - attach_workspace:
+          at: /go
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
+      - run:
+          name: Create database
+          command: make init
+      - run:
+          name: Execute migration
+          command: make up
+      - run:
+          name: Run all unit tests
+          command: |
+            trap "go-junit-report <${TEST_RESULTS}/go-test.out > ${TEST_RESULTS}/go-test-report.xml" EXIT
+            make e2e | tee ${TEST_RESULTS}/go-test.out
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+
+      - store_test_results:
+          path: /tmp/test-results
+
+workflows:
+  build-and-test:
+    jobs:
+      - setup
+      - e2e:
+          requires:
+            - setup
