@@ -34,7 +34,7 @@ jobs:
           name: Restore go modules cache
           keys:
               - v1-mod-{{ .Branch }}-{{ checksum "go.mod" }}
-
+      - run: sudo apt install -y mysql-client
       - run:
           name: Vendoring
           command: go mod download
