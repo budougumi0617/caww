@@ -4,6 +4,7 @@ executors:
     docker:
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
       - image: circleci/golang:1.12.2
+        user: root
       # CircleCI MySQL images available at: https://hub.docker.com/r/circleci/mysql/
       - image: circleci/mysql:5.7-ram
         # environment:
