@@ -44,7 +44,7 @@ jobs:
           name: Save go modules cache
           key: v1-mod-{{ .Branch }}-{{ checksum "go.mod" }}
           paths:
-              - ~/go/pkg/mod/cache
+              - /go/pkg/mod/cache
       - persist_to_workspace:
           root: /go
           paths:
