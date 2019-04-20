@@ -48,9 +48,6 @@ jobs:
               - /go/pkg/mod/cache
       - persist_to_workspace:
           root: /go
-          paths:
-              - pkg/mod/cache
-              - bin
 
   e2e:
     executor:
