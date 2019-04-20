@@ -5,6 +5,15 @@ executors:
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
       - image: circleci/golang:1.12.2
         user: root
+    working_directory: /go/src/github.com/budougumi0617/caww
+    environment:
+      - GO111MODULE: "on"
+
+  with_mysql:
+    docker:
+      # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
+      - image: circleci/golang:1.12.2
+        user: root
       # CircleCI MySQL images available at: https://hub.docker.com/r/circleci/mysql/
       - image: circleci/mysql:5.7-ram
         # environment:
@@ -29,7 +38,6 @@ jobs:
       name: default
     steps:
       - checkout
-      - run: mkdir -p $TEST_RESULTS
 
       - restore_cache:
           name: Restore go modules cache
@@ -54,10 +62,11 @@ jobs:
 
   e2e:
     executor:
-      name: default
+      name: with_mysql
     steps:
       - attach_workspace:
           at: /go
+      - run: mkdir -p $TEST_RESULTS
       - run: sudo apt install -y mysql-client
       - run:
           name: Wait for DB
