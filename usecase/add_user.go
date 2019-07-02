@@ -5,11 +5,19 @@ package usecase
 import (
 	"context"
 
+	"github.com/google/wire"
+
 	"github.com/budougumi0617/caww/entity"
 	"github.com/budougumi0617/caww/usecase/port"
 )
 
+// UserCaseSet returns filled UserCase object.
+var UserCaseSet = wire.NewSet(
+	NewUserCase,
+)
+
 // UserCase :
+// TODO SaveとFindで分ける
 type UserCase struct {
 	ua port.UserAccessor
 }
