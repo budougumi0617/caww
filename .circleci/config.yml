@@ -3,7 +3,7 @@ executors:
   default:
     docker:
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
-      - image: circleci/golang:1.12.2
+      - image: circleci/golang:1.12.6
         user: root
     working_directory: /go/src/github.com/budougumi0617/caww
     environment:
