@@ -11,26 +11,26 @@ import (
 	"github.com/budougumi0617/caww/usecase/port"
 )
 
-// UserCaseSet returns filled UserCase object.
-var UserCaseSet = wire.NewSet(
-	NewUserCase,
+// UserCreatorSet returns filled UserCase object.
+var UserCreatorSet = wire.NewSet(
+	NewUserCreator,
 )
 
-// UserCase :
+// UserCreator :
 // TODO SaveとFindで分ける
-type UserCase struct {
-	ua port.UserAccessor
+type UserCreator struct {
+	ua port.UserWriter
 }
 
-// NewUserCase :
-func NewUserCase(ua port.UserAccessor) *UserCase {
-	return &UserCase{
+// NewUserCreator :
+func NewUserCreator(ua port.UserWriter) *UserCreator {
+	return &UserCreator{
 		ua: ua,
 	}
 }
 
 // Save :
-func (au *UserCase) Save(ctx context.Context, name, email string) (int64, error) {
+func (au *UserCreator) Save(ctx context.Context, name, email string) (int64, error) {
 	u := &entity.User{
 		Name:  name,
 		Email: email,
@@ -41,13 +41,4 @@ func (au *UserCase) Save(ctx context.Context, name, email string) (int64, error)
 	}
 
 	return u.ID, nil
-}
-
-// Find :
-func (au *UserCase) Find(ctx context.Context, id int64) (*entity.User, error) {
-	u, err := au.ua.FindUser(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	return u, nil
 }
